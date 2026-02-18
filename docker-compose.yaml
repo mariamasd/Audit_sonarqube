@@ -32,8 +32,9 @@ services:
       MYSQL_DATABASE: budget_db
       MYSQL_USER: budget_user
       MYSQL_PASSWORD: budget_pass
+    # Host port changed to 3307 to avoid conflicts with a local MySQL
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
 
