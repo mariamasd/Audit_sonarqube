@@ -160,7 +160,6 @@ class TransactionRepository extends ServiceEntityRepository
 
         $trend = [];
 
-        // Initialiser les 12 mois
         for ($i = 0; $i < 12; $i++) {
             $date = (clone $startDate)->modify("+$i month");
             $key = $date->format('Y-m');

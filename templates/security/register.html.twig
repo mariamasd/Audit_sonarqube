@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - Budget Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #4f46e5 0%, #0ea5e9 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .register-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 2.5rem;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo i {
+            font-size: 3rem;
+            color: #4f46e5;
+        }
+        
+        .logo h2 {
+            margin-top: 0.5rem;
+            color: #1e293b;
+        }
+        
+        .form-control:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
+        }
+        
+        .btn-register {
+            background: linear-gradient(135deg, #4f46e5 0%, #0ea5e9 100%);
+            border: none;
+            padding: 0.75rem;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+        }
+
+        .password-strength {
+            height: 5px;
+            border-radius: 3px;
+            margin-top: 5px;
+            transition: all 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-card">
+        <div class="logo">
+            <i class="bi bi-wallet2"></i>
+            <h2>Budget Manager</h2>
+            <p class="text-muted">Créez votre compte</p>
+        </div>
+
+        {% if error %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                {{ error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endif %}
+
+        <form method="post">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="firstName" class="form-label">
+                        <i class="bi bi-person"></i> Prénom *
+                    </label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="firstName" 
+                           name="firstName" 
+                           required 
+                           autofocus
+                           placeholder="Jean">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="lastName" class="form-label">
+                        <i class="bi bi-person-fill"></i> Nom *
+                    </label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="lastName" 
+                           name="lastName" 
+                           required
+                           placeholder="Dupont">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">
+                    <i class="bi bi-envelope"></i> Email *
+                </label>
+                <input type="email" 
+                       class="form-control" 
+                       id="email" 
+                       name="email" 
+                       required
+                       placeholder="jean.dupont@example.com">
+                <small class="text-muted">Utilisé pour vous connecter</small>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">
+                    <i class="bi bi-lock"></i> Mot de passe *
+                </label>
+                <div class="input-group">
+                    <input type="password" 
+                           class="form-control" 
+                           id="password" 
+                           name="password" 
+                           required
+                           minlength="6"
+                           placeholder="••••••••">
+                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                        <i class="bi bi-eye" id="eyeIcon"></i>
+                    </button>
+                </div>
+                <div class="password-strength" id="passwordStrength"></div>
+                <small class="text-muted">Minimum 6 caractères</small>
+            </div>
+
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">
+                    <i class="bi bi-lock-fill"></i> Confirmer le mot de passe *
+                </label>
+                <input type="password" 
+                       class="form-control" 
+                       id="confirmPassword" 
+                       name="confirmPassword" 
+                       required
+                       minlength="6"
+                       placeholder="••••••••">
+                <small class="text-danger d-none" id="passwordMismatch">
+                    Les mots de passe ne correspondent pas
+                </small>
+            </div>
+
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="terms" required>
+                <label class="form-check-label" for="terms">
+                    J'accepte les <a href="#" class="text-primary">conditions d'utilisation</a>
+                </label>
+            </div>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('register') }}">
+
+            <button class="btn btn-primary btn-register w-100 mb-3" type="submit" id="submitBtn">
+                <i class="bi bi-person-plus"></i> Créer mon compte
+            </button>
+        </form>
+
+        <hr class="my-3">
+
+        <div class="text-center">
+            <p class="mb-0">
+                Vous avez déjà un compte ? 
+                <a href="{{ path('app_login') }}" class="text-primary fw-bold">
+                    Se connecter
+                </a>
+            </p>
+        </div>
+
+        <div class="text-center mt-3">
+            <small class="text-muted">
+                Budget Manager © 2026
+            </small>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Toggle password visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const password = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        togglePassword.addEventListener('click', function () {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            eyeIcon.classList.toggle('bi-eye');
+            eyeIcon.classList.toggle('bi-eye-slash');
+        });
+
+        // Password strength indicator
+        const passwordInput = document.getElementById('password');
+        const strengthBar = document.getElementById('passwordStrength');
+
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            
+            if (password.length >= 6) strength++;
+            if (password.length >= 10) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/\d/.test(password)) strength++;
+            if (/[^a-zA-Z\d]/.test(password)) strength++;
+
+            strengthBar.style.width = (strength * 20) + '%';
+            
+            if (strength <= 1) {
+                strengthBar.style.backgroundColor = '#dc3545';
+            } else if (strength <= 3) {
+                strengthBar.style.backgroundColor = '#ffc107';
+            } else {
+                strengthBar.style.backgroundColor = '#198754';
+            }
+        });
+
+        // Check password match
+        const confirmPassword = document.getElementById('confirmPassword');
+        const passwordMismatch = document.getElementById('passwordMismatch');
+        const submitBtn = document.getElementById('submitBtn');
+
+        function checkPasswordMatch() {
+            if (confirmPassword.value && password.value !== confirmPassword.value) {
+                passwordMismatch.classList.remove('d-none');
+                confirmPassword.classList.add('is-invalid');
+                submitBtn.disabled = true;
+            } else {
+                passwordMismatch.classList.add('d-none');
+                confirmPassword.classList.remove('is-invalid');
+                submitBtn.disabled = false;
+            }
+        }
+
+        password.addEventListener('input', checkPasswordMatch);
+        confirmPassword.addEventListener('input', checkPasswordMatch);
+    </script>
+</body>
+</html>

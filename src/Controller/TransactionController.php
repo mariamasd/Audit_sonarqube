@@ -31,7 +31,6 @@ class TransactionController extends AbstractController
 
         $transactions = $this->transactionRepository->findByUserAndMonth($user, $month, $year);
 
-        // 🔥 AJOUT DES STATISTIQUES
         $income = $this->transactionRepository->getTotalIncomeByMonth($user, $month, $year);
         $expense = $this->transactionRepository->getTotalExpenseByMonth($user, $month, $year);
         $expensesByCategory = $this->transactionRepository->getExpensesByCategory($user, $month, $year);
@@ -44,7 +43,6 @@ class TransactionController extends AbstractController
                 'expense' => $expense,
                 'balance' => $income - $expense,
             ],
-            // Pour éviter l’erreur si pas encore de budgets
             'budgetUsage' => [],
             'expensesByCategory' => $expensesByCategory,
         ];

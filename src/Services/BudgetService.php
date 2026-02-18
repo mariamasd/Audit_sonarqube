@@ -18,7 +18,6 @@ class BudgetService
      */
     public function getMonthlyStatisticsByDateRange(User $user, \DateTimeImmutable $startDate, \DateTimeImmutable $endDate): array
     {
-        // Transactions sur la plage
         $transactions = $this->transactionRepository->findByUserAndDateRange($user, $startDate, $endDate);
 
         $income = 0;
@@ -37,7 +36,6 @@ class BudgetService
             }
         }
 
-        // Calculer budgetUsage
         $budgets = $this->budgetRepository->findByUserAndDateRange($user, $startDate, $endDate);
         $budgetUsage = [];
 

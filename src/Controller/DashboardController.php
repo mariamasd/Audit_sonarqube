@@ -24,21 +24,16 @@ class DashboardController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        // Obtenir le mois et l'année actuels ou depuis la requête
         $month = $request->query->getInt('month', (int) date('m'));
         $year = $request->query->getInt('year', (int) date('Y'));
 
-        // Calculer la plage de dates pour le mois
         $startDate = new \DateTimeImmutable("$year-$month-01 00:00:00");
         $endDate = $startDate->modify('first day of next month');
 
-        // Obtenir les statistiques du mois
         $statistics = $this->budgetService->getMonthlyStatisticsByDateRange($user, $startDate, $endDate);
 
-        // Obtenir les dernières transactions
         $recentTransactions = $this->transactionRepository->findRecentByUser($user, 5);
 
-        // Obtenir l'évolution sur 12 mois
         $monthlyTrend = $this->budgetService->getMonthlyTrend($user);
 
         return $this->render('dashboard/index.html.twig', [
