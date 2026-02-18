@@ -231,15 +231,15 @@
                                             <td>
                                                 <span class="badge rounded-pill" 
                                                       style="background-color: {{ expense.color|default('#dc3545') }}">
-                                                    {{ expense.categoryName }}
+                                                    {{ expense.categoryName ?? expense }}
                                                 </span>
                                             </td>
                                             <td class="text-end fw-bold">
-                                                {{ expense.total|number_format(2) }} €
+                                                {{ expense.total|default(expense)|number_format(2) }} €
                                             </td>
                                             <td class="text-end">
                                                 <span class="badge bg-danger bg-opacity-75">
-                                                    {{ (expense.total / report.statistics.balance.expense * 100)|number_format(1) }}%
+                                                    {{ (expense.total|default(expense) / report.statistics.balance.expense * 100)|number_format(1) }}%
                                                 </span>
                                             </td>
                                         </tr>
@@ -291,15 +291,15 @@
                                             <td>
                                                 <span class="badge rounded-pill" 
                                                       style="background-color: {{ income.color|default('#198754') }}">
-                                                    {{ income.categoryName }}
+                                                    {{ income.categoryName ?? income }}
                                                 </span>
                                             </td>
                                             <td class="text-end fw-bold">
-                                                {{ income.total|number_format(2) }} €
+                                                {{ income.total|default(income)|number_format(2) }} €
                                             </td>
                                             <td class="text-end">
                                                 <span class="badge bg-success bg-opacity-75">
-                                                    {{ (income.total / report.statistics.balance.income * 100)|number_format(1) }}%
+                                                    {{ (income.total|default(income) / report.statistics.balance.income * 100)|number_format(1) }}%
                                                 </span>
                                             </td>
                                         </tr>
