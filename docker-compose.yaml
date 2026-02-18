@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: budget_php
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - mysql
+    environment:
+      DATABASE_URL: mysql://budget_user:budget_pass@mysql:3306/budget_db?serverVersion=8.0
+
+  nginx:
+    image: nginx:alpine
+    container_name: budget_nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/default.conf/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+
+  mysql:
+    image: mysql:8.0
+    container_name: budget_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: budget_db
+      MYSQL_USER: budget_user
+      MYSQL_PASSWORD: budget_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: budget_phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: budget_user
+      PMA_PASSWORD: budget_pass
+    ports:
+      - "8081:80"
+
+volumes:
+  mysql_data:

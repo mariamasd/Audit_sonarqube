@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Transaction - Budget Manager{% endblock %}
+
+{% block page_title %}Modifier la Transaction{% endblock %}
+
+{% block page_actions %}
+    <a href="{{ path('app_transaction_index') }}" class="btn btn-sm btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Retour
+    </a>
+{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="type" class="form-label">Type de transaction *</label>
+                                <select class="form-select" id="type" name="type" required>
+                                    <option value="income" {% if transaction.type == 'income' %}selected{% endif %}>Revenu</option>
+                                    <option value="expense" {% if transaction.type == 'expense' %}selected{% endif %}>Dépense</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="category_id" class="form-label">Catégorie *</label>
+                                <select class="form-select" id="category_id" name="category_id" required>
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}" 
+                                                data-type="{{ category.type }}"
+                                                {% if category.id == transaction.category.id %}selected{% endif %}>
+                                            {{ category.name }} ({{ category.type == 'income' ? 'Revenu' : 'Dépense' }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Titre *</label>
+                            <input type="text" class="form-control" id="title" name="title" value="{{ transaction.title }}" required maxlength="200">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="2">{{ transaction.description }}</textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="amount" class="form-label">Montant (€) *</label>
+                                <input type="number" class="form-control" id="amount" name="amount" value="{{ transaction.amount }}" step="0.01" min="0" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="transaction_date" class="form-label">Date *</label>
+                                <input type="date" class="form-control" id="transaction_date" name="transaction_date" value="{{ transaction.transactionDate|date('Y-m-d') }}" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="payment_method" class="form-label">Moyen de paiement</label>
+                            <select class="form-select" id="payment_method" name="payment_method">
+                                <option value="" {% if not transaction.paymentMethod %}selected{% endif %}>Non spécifié</option>
+                                <option value="cash" {% if transaction.paymentMethod == 'cash' %}selected{% endif %}>Espèces</option>
+                                <option value="card" {% if transaction.paymentMethod == 'card' %}selected{% endif %}>Carte bancaire</option>
+                                <option value="transfer" {% if transaction.paymentMethod == 'transfer' %}selected{% endif %}>Virement</option>
+                                <option value="check" {% if transaction.paymentMethod == 'check' %}selected{% endif %}>Chèque</option>
+                                <option value="paypal" {% if transaction.paymentMethod == 'paypal' %}selected{% endif %}>PayPal</option>
+                                <option value="other" {% if transaction.paymentMethod == 'other' %}selected{% endif %}>Autre</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="2">{{ transaction.notes }}</textarea>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ path('app_transaction_index') }}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Mettre à jour
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h6 class="text-muted">Informations</h6>
+                    <small class="text-muted">
+                        Créé le : {{ transaction.createdAt|date('d/m/Y à H:i') }}
+                        {% if transaction.updatedAt %}
+                            <br>Modifié le : {{ transaction.updatedAt|date('d/m/Y à H:i') }}
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    // Filtrer les catégories en fonction du type sélectionné
+    document.getElementById('type').addEventListener('change', function() {
+        const type = this.value;
+        const categorySelect = document.getElementById('category_id');
+        const options = categorySelect.querySelectorAll('option');
+        
+        options.forEach(option => {
+            const categoryType = option.getAttribute('data-type');
+            if (categoryType === type) {
+                option.style.display = 'block';
+            } else {
+                option.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

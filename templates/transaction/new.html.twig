@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Transaction - Budget Manager{% endblock %}
+
+{% block page_title %}Nouvelle Transaction{% endblock %}
+
+{% block page_actions %}
+    <a href="{{ path('app_transaction_index') }}" class="btn btn-sm btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Retour
+    </a>
+{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="type" class="form-label">Type de transaction *</label>
+                                <select class="form-select" id="type" name="type" required>
+                                    <option value="">Sélectionnez un type</option>
+                                    <option value="income">Revenu</option>
+                                    <option value="expense">Dépense</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="category_id" class="form-label">Catégorie *</label>
+                                <select class="form-select" id="category_id" name="category_id" required>
+                                    <option value="">Sélectionnez une catégorie</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}" data-type="{{ category.type }}">
+                                            {{ category.name }} ({{ category.type == 'income' ? 'Revenu' : 'Dépense' }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <small class="text-muted">
+                                    <a href="{{ path('app_category_new') }}">+ Créer une nouvelle catégorie</a>
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Titre *</label>
+                            <input type="text" class="form-control" id="title" name="title" required maxlength="200" placeholder="Ex: Courses du mois">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="2" placeholder="Détails de la transaction (optionnel)"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="amount" class="form-label">Montant (€) *</label>
+                                <input type="number" class="form-control" id="amount" name="amount" step="0.01" min="0" required placeholder="0.00">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="transaction_date" class="form-label">Date *</label>
+                                <input type="date" class="form-control" id="transaction_date" name="transaction_date" value="{{ 'now'|date('Y-m-d') }}" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="payment_method" class="form-label">Moyen de paiement</label>
+                            <select class="form-select" id="payment_method" name="payment_method">
+                                <option value="">Non spécifié</option>
+                                <option value="cash">Espèces</option>
+                                <option value="card">Carte bancaire</option>
+                                <option value="transfer">Virement</option>
+                                <option value="check">Chèque</option>
+                                <option value="paypal">PayPal</option>
+                                <option value="other">Autre</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="2" placeholder="Notes supplémentaires (optionnel)"></textarea>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ path('app_transaction_index') }}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    // Filtrer les catégories en fonction du type sélectionné
+    document.getElementById('type').addEventListener('change', function() {
+        const type = this.value;
+        const categorySelect = document.getElementById('category_id');
+        const options = categorySelect.querySelectorAll('option');
+        
+        options.forEach(option => {
+            if (option.value === '') {
+                option.style.display = 'block';
+                return;
+            }
+            
+            const categoryType = option.getAttribute('data-type');
+            if (type === '' || categoryType === type) {
+                option.style.display = 'block';
+            } else {
+                option.style.display = 'none';
+            }
+        });
+        
+        // Réinitialiser la sélection si la catégorie actuelle n'est pas du bon type
+        const selectedOption = categorySelect.options[categorySelect.selectedIndex];
+        if (selectedOption && selectedOption.getAttribute('data-type') !== type && type !== '') {
+            categorySelect.value = '';
+        }
+    });
+</script>
+{% endblock %}

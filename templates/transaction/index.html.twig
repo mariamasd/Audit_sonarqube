@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Transactions - Budget Manager{% endblock %}
+
+{% block page_title %}Mes Transactions{% endblock %}
+
+{% block page_actions %}
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a href="{{ path('app_transaction_index', {'month': currentMonth - 1, 'year': currentYear}) }}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+            <button type="button" class="btn btn-sm btn-outline-secondary">
+                {{ '%02d'|format(currentMonth) }}/{{ currentYear }}
+            </button>
+            <a href="{{ path('app_transaction_index', {'month': currentMonth + 1, 'year': currentYear}) }}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-chevron-right"></i>
+            </a>
+        </div>
+        <a href="{{ path('app_transaction_new') }}" class="btn btn-sm btn-primary">
+            <i class="bi bi-plus-circle"></i> Nouvelle transaction
+        </a>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title mb-4">
+                Transactions de {{ '%02d'|format(currentMonth) }}/{{ currentYear }}
+                <span class="badge bg-secondary">{{ transactions|length }}</span>
+            </h5>
+
+            {% if transactions|length > 0 %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Titre</th>
+                                <th>Description</th>
+                                <th>Catégorie</th>
+                                <th>Type</th>
+                                <th>Moyen</th>
+                                <th class="text-end">Montant</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in transactions %}
+                                <tr>
+                                    <td>{{ transaction.transactionDate|date('d/m/Y') }}</td>
+                                    <td class="fw-medium">{{ transaction.title }}</td>
+                                    <td>
+                                        <small class="text-muted">
+                                            {{ transaction.description|default('-')|length > 50 
+                                                ? transaction.description|slice(0, 50) ~ '...' 
+                                                : transaction.description|default('-') }}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <span class="badge" style="background-color: {{ transaction.category.color }}">
+                                            {{ transaction.category.name }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if transaction.type == 'income' %}
+                                            <span class="badge bg-success">Revenu</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Dépense</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small>{{ transaction.paymentMethod|default('-') }}</small>
+                                    </td>
+                                    <td class="text-end fw-bold {% if transaction.type == 'income' %}text-success{% else %}text-danger{% endif %}">
+                                        {% if transaction.type == 'income' %}+{% else %}-{% endif %}{{ transaction.amount|number_format(2, ',', ' ') }} €
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{{ path('app_transaction_edit', {'id': transaction.id}) }}" class="btn btn-outline-primary" title="Modifier">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <form method="post" action="{{ path('app_transaction_delete', {'id': transaction.id}) }}" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette transaction ?');">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ transaction.id) }}">
+                                                <button type="submit" class="btn btn-outline-danger" title="Supprimer">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox display-1 text-muted"></i>
+                    <h4 class="mt-3 text-muted">Aucune transaction</h4>
+                    <p class="text-muted">Commencez par ajouter votre première transaction</p>
+                    <a href="{{ path('app_transaction_new') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Ajouter une transaction
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

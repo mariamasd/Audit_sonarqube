@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Catégorie - Budget Manager{% endblock %}
+
+{% block page_title %}Nouvelle Catégorie{% endblock %}
+
+{% block page_actions %}
+    <a href="{{ path('app_category_index') }}" class="btn btn-sm btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Retour
+    </a>
+{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nom de la catégorie *</label>
+                            <input type="text" class="form-control" id="name" name="name" required maxlength="100" placeholder="Ex: Alimentation">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="2" placeholder="Description optionnelle"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="type" class="form-label">Type *</label>
+                            <select class="form-select" id="type" name="type" required>
+                                <option value="">Sélectionnez un type</option>
+                                <option value="expense">Dépense</option>
+                                <option value="income">Revenu</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="color" class="form-label">Couleur</label>
+                            <div class="input-group">
+                                <input type="color" class="form-control form-control-color" id="color" name="color" value="#6366f1" title="Choisir une couleur">
+                                <input type="text" class="form-control" id="color_text" value="#6366f1" placeholder="#6366f1">
+                            </div>
+                            <small class="text-muted">Couleur utilisée pour identifier la catégorie dans les graphiques</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="icon" class="form-label">Icône (optionnel)</label>
+                            <input type="text" class="form-control" id="icon" name="icon" placeholder="Ex: cart, wallet, house" maxlength="50">
+                            <small class="text-muted">
+                                Nom d'une icône Bootstrap Icons (sans le préfixe "bi-"). 
+                                <a href="https://icons.getbootstrap.com/" target="_blank">Voir les icônes disponibles</a>
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Aperçu</label>
+                            <div class="p-3 border rounded">
+                                <div class="d-flex align-items-center">
+                                    <div id="preview-icon" style="width: 40px; height: 40px; background-color: #6366f1; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                                        <i class="bi bi-tag text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0" id="preview-name">Nom de la catégorie</h6>
+                                        <small class="text-muted" id="preview-type">Type</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ path('app_category_index') }}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    // Aperçu en temps réel
+    const colorInput = document.getElementById('color');
+    const colorText = document.getElementById('color_text');
+    const iconInput = document.getElementById('icon');
+    const nameInput = document.getElementById('name');
+    const typeInput = document.getElementById('type');
+    const previewIcon = document.getElementById('preview-icon');
+    const previewName = document.getElementById('preview-name');
+    const previewType = document.getElementById('preview-type');
+
+    // Synchroniser le color picker et le champ texte
+    colorInput.addEventListener('input', function() {
+        colorText.value = this.value;
+        previewIcon.style.backgroundColor = this.value;
+    });
+
+    colorText.addEventListener('input', function() {
+        if (/^#[0-9A-F]{6}$/i.test(this.value)) {
+            colorInput.value = this.value;
+            previewIcon.style.backgroundColor = this.value;
+        }
+    });
+
+    // Aperçu de l'icône
+    iconInput.addEventListener('input', function() {
+        const iconClass = this.value ? 'bi-' + this.value : 'bi-tag';
+        previewIcon.querySelector('i').className = 'bi ' + iconClass + ' text-white';
+    });
+
+    // Aperçu du nom
+    nameInput.addEventListener('input', function() {
+        previewName.textContent = this.value || 'Nom de la catégorie';
+    });
+
+    // Aperçu du type
+    typeInput.addEventListener('change', function() {
+        const typeText = this.value === 'income' ? 'Revenu' : 'Dépense';
+        previewType.textContent = typeText;
+    });
+</script>
+{% endblock %}

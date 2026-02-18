@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Budget - Budget Manager{% endblock %}
+
+{% block page_title %}Nouveau Budget{% endblock %}
+
+{% block page_actions %}
+    <a href="{{ path('app_budget_index') }}" class="btn btn-sm btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Retour
+    </a>
+{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nom du budget *</label>
+                            <input type="text" class="form-control" id="name" name="name" required maxlength="100" placeholder="Ex: Budget Alimentation">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="2" placeholder="Description optionnelle"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Montant (€) *</label>
+                            <input type="number" class="form-control" id="amount" name="amount" step="0.01" min="0" required placeholder="0.00">
+                            <small class="text-muted">Montant maximum que vous souhaitez dépenser</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="category_name" class="form-label">Catégorie associée</label>
+                            <input type="text" class="form-control" id="category_name" name="category_name" maxlength="100" placeholder="Ex: Alimentation">
+                            <small class="text-muted">Nom de la catégorie de dépenses à suivre (optionnel)</small>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="month" class="form-label">Mois *</label>
+                                <select class="form-select" id="month" name="month" required>
+                                    <option value="1" {% if currentMonth == 1 %}selected{% endif %}>Janvier</option>
+                                    <option value="2" {% if currentMonth == 2 %}selected{% endif %}>Février</option>
+                                    <option value="3" {% if currentMonth == 3 %}selected{% endif %}>Mars</option>
+                                    <option value="4" {% if currentMonth == 4 %}selected{% endif %}>Avril</option>
+                                    <option value="5" {% if currentMonth == 5 %}selected{% endif %}>Mai</option>
+                                    <option value="6" {% if currentMonth == 6 %}selected{% endif %}>Juin</option>
+                                    <option value="7" {% if currentMonth == 7 %}selected{% endif %}>Juillet</option>
+                                    <option value="8" {% if currentMonth == 8 %}selected{% endif %}>Août</option>
+                                    <option value="9" {% if currentMonth == 9 %}selected{% endif %}>Septembre</option>
+                                    <option value="10" {% if currentMonth == 10 %}selected{% endif %}>Octobre</option>
+                                    <option value="11" {% if currentMonth == 11 %}selected{% endif %}>Novembre</option>
+                                    <option value="12" {% if currentMonth == 12 %}selected{% endif %}>Décembre</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="year" class="form-label">Année *</label>
+                                <select class="form-select" id="year" name="year" required>
+                                    {% for y in range(currentYear - 1, currentYear + 2) %}
+                                        <option value="{{ y }}" {% if y == currentYear %}selected{% endif %}>{{ y }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-lightbulb"></i> <strong>Conseil :</strong>
+                            Définissez des budgets réalistes en analysant vos dépenses passées. Vous pourrez toujours les ajuster plus tard.
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ path('app_budget_index') }}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
